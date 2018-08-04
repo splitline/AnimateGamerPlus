@@ -1,0 +1,16 @@
+{
+    "name": "動畫瘋 Plus",
+    "version": "1.0.0",
+    "manifest_version": 1,
+    "description": "",
+    "icons" : { },
+    "content_scripts": [  
+      {
+        "matches": [ "https://ani.gamer.com.tw/animeVideo.php?sn=*" ],
+        "css": [ "css/style.css" ],
+        "js": [ "js/main.js" ],
+        "all_frames": true,
+        "run_at": "document_idle"
+      }
+    ]
+  }
