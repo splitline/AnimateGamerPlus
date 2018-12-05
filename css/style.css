@@ -9,10 +9,12 @@
 }
 
 #right-click-menu {
-    position: relative;
+    position: absolute;
     width: 375px;
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    box-shadow: 0px 0px 50px black !important;
+    z-index: 888;
+    color: whitesmoke;
 }
 
 #right-click-menu > p {
