@@ -1,6 +1,8 @@
+'use strict'
+
 // utils
-setStyle = (element, styles) => {
-    for (s in styles) {
+const setStyle = (element, styles) => {
+    for (var s in styles) {
         element.style[s] = styles[s];
     }
 };
@@ -113,6 +115,10 @@ window.onload = () => {
                 }
             }, 750);
         }
+
+        if (items.autoNext) {
+            
+        }
     });
 
 
@@ -120,18 +126,19 @@ window.onload = () => {
 
     document.body.appendChild(menu);
     menu.style.display = 'none';
-    const video = document.getElementById('ani_video_html5_api');
+    const video = () => document.getElementById('ani_video_html5_api');
+
 
     // set speed 
     document.getElementById("speed-slider").oninput = (e) => {
         speed = e.target.value;
-        video.playbackRate = speed;
+        video().playbackRate = speed;
         document.getElementById("speed-val").innerText = speed;
     };
     document.getElementById("reset-speed").onclick = (e) => {
         document.getElementById("speed-val").innerText
             = document.getElementById("speed-slider").value
-            = video.playbackRate
+            = video().playbackRate
             = speed
             = 1;
         hideContextMenu(e);
@@ -140,7 +147,7 @@ window.onload = () => {
     // on / off light
     document.getElementById("off-light").onclick = (e) => {
         isOffLight = !isOffLight;
-        setStyle(document.querySelector('div.video'), {
+        setStyle(document.querySelector("div.video"), {
             zIndex: isOffLight ? 777 : '',
         });
         setStyle(blackDiv, {
@@ -153,7 +160,7 @@ window.onload = () => {
     document.getElementById("PiP").onclick = (e) => {
         if (document.pictureInPictureEnabled) {
             if (!document.pictureInPictureElement) {
-                video.requestPictureInPicture()
+                video().requestPictureInPicture()
                     .catch(error => console.error(error));
             } else {
                 document.exitPictureInPicture()
@@ -169,7 +176,7 @@ window.onload = () => {
     document.querySelectorAll(".op-skipper")
         .forEach(element => {
             element.onclick = (e) => {
-                video.currentTime += e.target.dataset.time * 60 - 3;
+                video().currentTime += e.target.dataset.time * 60 - 3;
                 hideContextMenu(e);
             };
         });
