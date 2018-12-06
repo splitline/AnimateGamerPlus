@@ -53,93 +53,124 @@ setStyle(menu, {
 
 // toggle menu
 document.addEventListener('contextmenu', function (e) {
-    let appended = !!document.getElementById("right-click-menu");
     if (e.target && e.target.id === 'ani_video_html5_api') {
-        let video = document.querySelector('#ani_video_html5_api');
-        !appended && document.body.appendChild(menu);
-
-        // set context menu position
-        setStyle(menu, {
-            display: 'block',
-            top: (e.clientY) + "px",
-            left: (e.clientX) + "px"
-        });
-
-        // set speed 
-        let speedSlider = document.getElementById("speed-slider");
-        !appended && speedSlider.addEventListener('input', (e) => {
-            speed = speedSlider.value;
-            video.playbackRate = speed;
-            document.getElementById("speed-val").innerText = speed;
-        });
-        let speedReset = document.getElementById("reset-speed");
-        !appended && speedReset.addEventListener('click', (e) => {
-            document.getElementById("speed-val").innerText
-                = video.playbackRate
-                = speed
-                = speedSlider.value
-                = 1;
-        });
-
-        // on / off light
-        let offLight = document.getElementById("off-light");
-        !appended && offLight.addEventListener('click', (e) => {
-            isOffLight = !isOffLight;
-            setStyle(document.querySelector('div.video'), {
-                zIndex: isOffLight ? 777 : '',
-            });
-            setStyle(blackDiv, {
-                display: isOffLight ? 'block' : 'none'
-            })
-        });
-
-        // Picture in picture
-        let PiP = document.getElementById("PiP");
-        !appended && PiP.addEventListener('click', (e) => {
-            if (document.pictureInPictureEnabled) {
-                if (!document.pictureInPictureElement) {
-                    video.requestPictureInPicture()
-                        .catch(error => console.error(error));
-                } else {
-                    document.exitPictureInPicture()
-                        .catch(error => console.error(error));
-                }
-            } else {
-                alert("你的瀏覽器不支援此功能 QQ");
+        if (document.webkitCurrentFullScreenElement) {
+            if (!document.getElementById("ani_video").querySelector('#right-click-menu')) {
+                menu = document.getElementById('right-click-menu');
+                document.getElementById("ani_video").appendChild(menu);
             }
-        });
 
-        // op skipper
-        let opSkipper = document.querySelectorAll(".op-skipper");
-        !appended && opSkipper.forEach(element => {
-            element.addEventListener('click', (e) => {
-                video.currentTime += e.target.dataset.time * 60 - 3;
+            // set context menu position
+            setStyle(menu, {
+                display: 'block',
+                top: (e.clientY) + "px",
+                left: (e.clientX) + "px"
             });
-        });
+        } else {
+            if (document.getElementById("ani_video").querySelector('#right-click-menu')) {
+                menu = document.getElementById('right-click-menu');
+                document.body.appendChild(menu);
+            }
+
+            // set context menu position
+            setStyle(menu, {
+                display: 'block',
+                top: (e.pageY) + "px",
+                left: (e.pageX) + "px"
+            });
+        }
 
         e.preventDefault();
     }
 }, false);
 
-window.addEventListener('click', function (e) {
-    if (document.getElementById("right-click-menu"))
-        setStyle(document.getElementById("right-click-menu"), { display: 'none' })
+const hideContextMenu = (e) => {
+    setStyle(document.getElementById("right-click-menu"), { display: 'none' })
+}
+
+window.addEventListener('mousedown', function (e) {
+    if (e.target.id == "ani_video_html5_api"
+        && event.which == 1
+        && document.getElementById("right-click-menu")
+        && document.getElementById("right-click-menu").style.display === "block") {
+        e.target.paused ? e.target.play() : e.target.pause();
+    }
+    if (e.path.every(p => p.id !== "right-click-menu")
+        && document.getElementById("right-click-menu"))
+        hideContextMenu(e);
 })
 
-chrome.storage.sync.get({
-    ncc: true,
-    autoNext: true
-}, function (items) {
-    if (items.ncc) {
-        window.ncc_check = setInterval(function () {
-            if (document.querySelector(".ncc-choose-btn")) {
-                document.getElementById('adult').click();
-                clearInterval(window.ncc_check);
-            }
-        }, 1000);
-    }
+window.onload = () => {
+    chrome.storage.sync.get({
+        ncc: true,
+        autoNext: true
+    }, function (items) {
+        if (items.ncc) {
+            window.ncc_check = setInterval(function () {
+                if (document.querySelector(".ncc-choose-btn")) {
+                    document.getElementById('adult').click();
+                    clearInterval(window.ncc_check);
+                }
+            }, 750);
+        }
+    });
 
-    // if (items.autoNext) {
-    //     window.auto_next = 
-    // }
-});
+
+    // Init context menu
+
+    document.body.appendChild(menu);
+    menu.style.display = 'none';
+    const video = document.getElementById('ani_video_html5_api');
+
+    // set speed 
+    document.getElementById("speed-slider").oninput = (e) => {
+        speed = e.target.value;
+        video.playbackRate = speed;
+        document.getElementById("speed-val").innerText = speed;
+    };
+    document.getElementById("reset-speed").onclick = (e) => {
+        document.getElementById("speed-val").innerText
+            = document.getElementById("speed-slider").value
+            = video.playbackRate
+            = speed
+            = 1;
+        hideContextMenu(e);
+    };
+
+    // on / off light
+    document.getElementById("off-light").onclick = (e) => {
+        isOffLight = !isOffLight;
+        setStyle(document.querySelector('div.video'), {
+            zIndex: isOffLight ? 777 : '',
+        });
+        setStyle(blackDiv, {
+            display: isOffLight ? 'block' : 'none'
+        })
+        hideContextMenu(e);
+    };
+
+    // Picture in picture
+    document.getElementById("PiP").onclick = (e) => {
+        if (document.pictureInPictureEnabled) {
+            if (!document.pictureInPictureElement) {
+                video.requestPictureInPicture()
+                    .catch(error => console.error(error));
+            } else {
+                document.exitPictureInPicture()
+                    .catch(error => console.error(error));
+            }
+        } else {
+            alert("你的瀏覽器不支援此功能 QQ");
+        }
+        hideContextMenu(e);
+    };
+
+    // op skipper
+    document.querySelectorAll(".op-skipper")
+        .forEach(element => {
+            element.onclick = (e) => {
+                video.currentTime += e.target.dataset.time * 60 - 3;
+                hideContextMenu(e);
+            };
+        });
+}

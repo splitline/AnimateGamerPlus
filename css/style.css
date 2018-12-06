@@ -1,6 +1,6 @@
 #black-layer {
     position: fixed;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.9);
     width: 100%;
     height: 100%;
     left: 0;
@@ -13,7 +13,7 @@
     width: 375px;
     background-color: rgba(0, 0, 0, 0.85) !important;
     box-shadow: 0px 0px 50px black !important;
-    z-index: 888;
+    z-index: 9453;
     color: whitesmoke;
 }
 
